@@ -1,0 +1,25 @@
+FROM python:3.10-slim
+
+# Install system dependencies (Poppler and Tesseract for OCR)
+RUN apt-get update && apt-get install -y \
+    poppler-utils \
+    tesseract-ocr \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Streamlit configuration
+EXPOSE 8080
+ENV PORT 8080
+
+# Command to start Streamlit
+CMD ["streamlit", "run", "app93.py", "--server.port=8080", "--server.address=0.0.0.0"]
